@@ -75,7 +75,6 @@ public class Main implements Runnable {
                     inet = InetAddress.getByName(ipAddress);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
-
                 }
                 try {
                     inet = InetAddress.getByName(ipAddress);
