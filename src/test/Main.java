@@ -11,7 +11,7 @@ public class Main implements Runnable {
     private static ArrayList<String> addresses = new ArrayList<>();
     private static HashMap<String, String> addressIp =  new HashMap<>();
     private Main(){
-    Thread t = new Thread(this, "NewThread");
+        Thread t = new Thread(this, "NewThread");
         t.start();
     }
     private static Connection getDBConnection(){
@@ -65,7 +65,6 @@ public class Main implements Runnable {
 
     @SuppressWarnings("InfiniteLoopStatement")
     @Override
-
     public void run() {
         while (true){
             selectFromDB();
