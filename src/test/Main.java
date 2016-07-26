@@ -68,6 +68,8 @@ public class Main implements Runnable {
     public void run() {
         while (true){
             selectFromDB();
+            int i = 1;
+            boolean marker = true;
             for (String addressFromArray : addresses) {
                 String ipAddress = addressIp.get(addressFromArray);
                 InetAddress inet = null;
@@ -82,12 +84,11 @@ public class Main implements Runnable {
                     System.out.println("incorrect hostname");
                 }
                 try {
-                    System.out.print((inet != null && inet.isReachable(5000)) ? "" : "Host" + addressFromArray + "is NOT reachable\n");
+                    System.out.print((inet != null && inet.isReachable(5000)) ? "" : "Host " + i++ + ". " + addressFromArray + "is NOT reachable\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("All hosts UP");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
