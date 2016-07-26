@@ -61,8 +61,6 @@ public class Main implements Runnable {
     }
     public static void main(String[] args) throws  IOException {
         new Main();
-
-
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
