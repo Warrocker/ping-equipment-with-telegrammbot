@@ -16,12 +16,12 @@ import java.util.HashMap;
 /*
  Написано одним классом для простоты копирования и наглядности
  */
-public class Main implements Runnable {
+public class Pinger implements Runnable {
     // Массив с адрессами хостов
     private static ArrayList<String> addresses = new ArrayList<>();
     // Мапа с адресс/IP
     private static HashMap<String, String> addressIp =  new HashMap<>();
-    private Main(){
+    private Pinger(){
         Thread t = new Thread(this, "NewThread");
         t.start();
     }
@@ -84,7 +84,7 @@ public class Main implements Runnable {
            // e.printStackTrace();
         }
         // Создаем новый поток для подключения к базе и пинга на хосты
-        new Main();
+        new Pinger();
 
 
     }
