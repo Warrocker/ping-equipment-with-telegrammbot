@@ -19,5 +19,14 @@
         <jarDirectory url="file://$USER_HOME$/Загрузки/mysql-connector-java-5.1.39" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Загрузки/telegrambots-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
