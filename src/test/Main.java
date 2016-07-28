@@ -35,7 +35,7 @@ public class Main implements Runnable {
         }
         try {
             //Подключаемся к базе драйвер:база:адресс:порт(стандартный порт 3306)/имя_базы?useUnicode=true&characterEncoding=utf-8, логин, пароль
-            dbConnection = DriverManager.getConnection("jdbc:mysql://91.192.217.210:3306/nag?useUnicode=true&characterEncoding=utf-8", "root","realnet_f");
+            dbConnection = DriverManager.getConnection("<database>");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -44,7 +44,7 @@ public class Main implements Runnable {
     }
     private static void selectFromDB(){
         // Формируем запрос к базе где хранятся наши IP адреса и физические адреса
-        String selectTableSQL = "SELECT alias AS 'address', address AS 'ip' FROM `Kievcfg` WHERE address NOT LIKE '%#' ORDER BY alias ASC";
+        String selectTableSQL = "<your_command>";
         Connection dbConnection = null;
         Statement statement;
         try {
@@ -169,12 +169,12 @@ class SimpleBot extends TelegramLongPollingBot{
     //Сюда имя бота
     @Override
     public String getBotUsername() {
-        return "warrockerbot";
+        return "<botname>";
     }
     //Сюда токен бота
     @Override
     public String getBotToken() {
-        return "207810721:AAHHKXzF-SPRdMrM9qFTeBFqhQhndiE_19I";
+        return "<Your_Token>";
     }
     // Обработчик
     @Override
