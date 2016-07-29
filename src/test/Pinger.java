@@ -21,6 +21,8 @@ public class Pinger implements Runnable {
     private static ArrayList<String> addresses = new ArrayList<>();
     // Мапа с адресс/IP
     private static HashMap<String, String> addressIp =  new HashMap<>();
+    // Список недоступных хостов
+    private static ArrayList<String> unreachableHosts = new ArrayList<>();
     private Pinger(){
         Thread t = new Thread(this, "NewThread");
         t.start();
@@ -35,7 +37,7 @@ public class Pinger implements Runnable {
         }
         try {
             //Подключаемся к базе драйвер:база:адресс:порт(стандартный порт 3306)/имя_базы?useUnicode=true&characterEncoding=utf-8, логин, пароль
-            dbConnection = DriverManager.getConnection("<database>");
+            dbConnection = DriverManager.getConnection("<Your_database>");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -44,7 +46,7 @@ public class Pinger implements Runnable {
     }
     private static void selectFromDB(){
         // Формируем запрос к базе где хранятся наши IP адреса и физические адреса
-        String selectTableSQL = "<your_command>";
+        String selectTableSQL = "<Command>";
         Connection dbConnection = null;
         Statement statement;
         try {
@@ -81,7 +83,7 @@ public class Pinger implements Runnable {
         try {
             telegramBotsApi.registerBot(new SimpleBot());
         } catch (TelegramApiException e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
         }
         // Создаем новый поток для подключения к базе и пинга на хосты
         new Pinger();
@@ -112,6 +114,7 @@ public class Pinger implements Runnable {
             for (String addressFromArray : addresses) {
                 String ipAddress = addressIp.get(addressFromArray);
                 InetAddress inet = null;
+                String hostMessage;
                 try {
                     inet = InetAddress.getByName(ipAddress);
                 } catch (UnknownHostException e) {
@@ -123,26 +126,49 @@ public class Pinger implements Runnable {
                     System.out.println("incorrect hostname");
                 }
                 try {
-                    if (inet != null && inet.isReachable(5000))
-                    {System.out.print("");
+                    if (inet != null && inet.isReachable(5000)) {
+                        //Если наш хост до этого падал, пишем что он поднялся
+                        if(unreachableHosts.contains(addressFromArray)){
+                            unreachableHosts.remove(addressFromArray);
+                            System.out.println(unreachableHosts.size());
+                            hostMessage = "Host " + addressFromArray + " is UP\n";
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.enableMarkdown(true);
+                            /*
+                        ID чата в котором будем это слать получается методом message.getChatId().toString()
+                         чуть ниже видно просто выводите результат метода в чат и получаете ID
+                         */
+                            sendMessage.setChatId("<ChatId>");
+                            sendMessage.setText(hostMessage);
+                            try {
+                                // шлем в телеграммстер
+                                sb.sendMessage(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     else {
-                        marker = false;
-                        // Генерируем сообщение о недоступности
-                        String problem = "Host " + addressFromArray + "is NOT reachable\n";
-                        SendMessage sendMessage = new SendMessage();
-                        sendMessage.enableMarkdown(true);
+                        // Если уже известно что хост недоступен сообщение об этом не пишем
+                        if (!unreachableHosts.contains(addressFromArray)) {
+                            unreachableHosts.add(addressFromArray);
+                            marker = false;
+                            // Генерируем сообщение о недоступности
+                            hostMessage = "Host " + addressFromArray + " is NOT reachable\n";
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.enableMarkdown(true);
                         /*
                         ID чата в котором будем это слать получается методом message.getChatId().toString()
                          чуть ниже видно просто выводите результат метода в чат и получаете ID
                          */
-                        sendMessage.setChatId("-172618951");
-                        sendMessage.setText(problem);
-                        try {
-                            // шлем в телеграммстер
-                            sb.sendMessage(sendMessage);
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
+                            sendMessage.setChatId("<ChatId>");
+                            sendMessage.setText(hostMessage);
+                            try {
+                                // шлем в телеграммстер
+                                sb.sendMessage(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -155,7 +181,7 @@ public class Pinger implements Runnable {
                 System.out.println("All is UP");
             }
             try {
-                // Повторяем цыкл каждые 5 секунд
+                // Повторяем цикл каждые 5 секунд
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
                 System.out.println("Interrupted");
@@ -174,7 +200,7 @@ class SimpleBot extends TelegramLongPollingBot{
     //Сюда токен бота
     @Override
     public String getBotToken() {
-        return "<Your_Token>";
+        return "<TOKEN>";
     }
     // Обработчик
     @Override
@@ -182,7 +208,7 @@ class SimpleBot extends TelegramLongPollingBot{
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (message.getText().contains("/help"))
-                sendMsg(message, "work");
+                sendMsg(message, "Я работаю, все хорошо");
             else
                 sendMsg(message, "Я не знаю что ответить на это");
         }
