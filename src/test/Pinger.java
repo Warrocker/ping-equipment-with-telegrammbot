@@ -149,10 +149,11 @@ public class Pinger implements Runnable {
                         }
                     }
                     else {
+                        marker = false;
                         // Если уже известно что хост недоступен сообщение об этом не пишем
                         if (!unreachableHosts.contains(addressFromArray)) {
                             unreachableHosts.add(addressFromArray);
-                            marker = false;
+
                             // Генерируем сообщение о недоступности
                             hostMessage = "Host " + addressFromArray + " is NOT reachable\n";
                             SendMessage sendMessage = new SendMessage();
